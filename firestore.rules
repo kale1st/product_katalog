@@ -1,0 +1,65 @@
+rules_version = '2';
+
+// Koza İpek — Firestore güvenlik kuralları
+// Yayınlamak için: firebase deploy --only firestore:rules
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Giriş yapmış ve adminler/{uid} belgesi olan hesap yöneticidir
+    function yonetici() {
+      return request.auth != null
+        && exists(/databases/$(database)/documents/adminler/$(request.auth.uid));
+    }
+
+    // Ürünler ve site bilgileri: herkes okur, sadece yönetici yazar
+    match /urunler/{id} {
+      allow read: if true;
+      allow write: if yonetici();
+    }
+    match /site/{id} {
+      allow read: if true;
+      allow write: if yonetici();
+    }
+
+    // Yönetici listesi: herkes sadece kendi kaydını görebilir, kimse yazamaz
+    // (Yönetici eklemek için Firebase konsolundan elle belge oluşturulur.)
+    match /adminler/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    // Siparişler
+    //  - Linki bilen tek siparişi açabilir (get), kimse listeleyemez (list) — yönetici hariç
+    //  - Herkes yeni sipariş oluşturabilir ama sadece aşağıdaki kurallara uyan
+    //  - Değiştirme ve silme sadece yönetici
+    match /siparisler/{id} {
+      allow get: if true;
+      allow list, update, delete: if yonetici();
+      allow create: if gecerliSiparis(request.resource.data);
+    }
+
+    // Minimum adet, yönetim panelinde ayarlanan değerden (site/genel → minAdet) okunur
+    function minimumAdet() {
+      return exists(/databases/$(database)/documents/site/genel)
+        ? get(/databases/$(database)/documents/site/genel).data.get('minAdet', 1)
+        : 1;
+    }
+
+    function gecerliSiparis(s) {
+      return s.keys().hasOnly(['v', 'no', 't', 'm', 'i', 'a', 'f', 'g', 'adet', 'durum', 'olusturma'])
+        && s.no is string && s.no.size() < 30
+        && s.m is list && s.m.size() == 7
+        && s.m[0] is string && s.m[0].size() > 0 && s.m[0].size() < 60
+        && s.m[2] is string && s.m[2].size() >= 10 && s.m[2].size() < 25
+        && s.m[3] is string && s.m[3].size() < 500
+        && s.i is list && s.i.size() > 0 && s.i.size() <= 60
+        && s.f is list && s.f.size() <= 5
+        && s.adet is int && s.adet >= minimumAdet() && s.adet <= 100000
+        && s.a is number && s.a > 0
+        && s.g is number && s.g >= s.a
+        && s.durum == 'yeni'
+        && s.olusturma == request.time;
+    }
+  }
+}

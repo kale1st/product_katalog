@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Koza İpek · Şal, Eşarp, Fular Kataloğu</title>
+  <meta name="description" content="Koza İpek toptan şal, eşarp ve fular kataloğu.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Koza İpek">
+  <meta property="og:title" content="Koza İpek · Şal, Eşarp, Fular Kataloğu">
+  <meta property="og:description" content="Toptan şal, eşarp ve fular. Ürünleri inceleyin, sepete ekleyin, WhatsApp'tan sipariş verin.">
+  <meta property="og:image" content="https://firebasestorage.googleapis.com/v0/b/kozaipek-katalog.firebasestorage.app/o/gorseller%2Fpaylasim.jpg?alt=media">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:url" content="https://kozaipek-katalog.web.app/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="https://www.kozaipek.net/wp-content/uploads/2026/04/cropped-favicon-270x270.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ============================== ÜST BAR ============================== -->
+  <header class="ust-bar">
+    <div class="kapsayici ust-bar-ic">
+      <button class="logo-buton" id="logo-buton" type="button">
+        <img src="img/logo.jpg" alt="Koza İpek logo" width="46" height="46">
+        <span class="logo-yazi">
+          <span class="marka-adi" data-site="marka"></span>
+          <span class="marka-alt" data-site="altBaslik"></span>
+        </span>
+      </button>
+
+      <!-- Kategori sekmeleri (masaüstü) — js/katalog.js doldurur -->
+      <nav class="kategori-nav sadece-masaustu" id="kategori-nav"></nav>
+
+      <div class="ust-bar-sag">
+        <button class="btn btn-cizgili" id="kataloga-don" type="button" hidden>← Kataloğa dön</button>
+        <a class="btn btn-wa" id="ust-whatsapp" target="_blank" rel="noopener" aria-label="WhatsApp">
+          <img src="img/wa-white.svg" alt=""><span class="sadece-masaustu">WhatsApp</span>
+        </a>
+        <button class="btn btn-siyah" id="ust-sepet" type="button" aria-label="Sepet">
+          <img src="img/bag-white.svg" alt=""><span class="sadece-masaustu">Sepet</span>
+          <span class="sepet-sayi" id="sepet-sayi">0</span>
+        </button>
+      </div>
+    </div>
+    <!-- Kategori sekmeleri (mobil) -->
+    <div class="kategori-mobil sadece-mobil" id="kategori-mobil"></div>
+  </header>
+
+  <!-- ============================== KATALOG ============================== -->
+  <main class="sayfa kapsayici" id="sayfa-katalog" style="padding-bottom:96px">
+    <section class="banner-alani" id="banner-alani">
+      <div class="banner-kaydirici" id="banner-kaydirici"></div>
+      <button class="banner-ok sol" id="banner-onceki" type="button" aria-label="Önceki">‹</button>
+      <button class="banner-ok sag" id="banner-sonraki" type="button" aria-label="Sonraki">›</button>
+      <div class="banner-noktalar" id="banner-noktalar"></div>
+    </section>
+
+    <div class="katalog-ust" id="katalog-ust">
+      <div>
+        <h1 class="sayfa-basligi" id="katalog-basligi">Tüm ürünler</h1>
+        <div class="sonuc-sayi" id="sonuc-sayi"></div>
+      </div>
+      <input class="alan arama" id="arama" type="search" placeholder="Ürün ara">
+    </div>
+
+    <div class="urun-izgara" id="urun-izgara"></div>
+    <div id="yukleme-isareti" style="height:1px"></div>
+    <div class="katalog-alt-bilgi" id="katalog-alt-bilgi"></div>
+
+    <div class="bos-kutu" id="bos-sonuc" hidden>
+      <div class="bos-kutu-baslik">Sonuç bulunamadı</div>
+      <p>Başka bir kategori seçin ya da aramayı temizleyin.</p>
+      <button class="btn btn-siyah" id="filtreyi-temizle" type="button">Tüm ürünleri göster</button>
+    </div>
+  </main>
+
+  <!-- ============================== SEPET ============================== -->
+  <main class="sayfa kapsayici sepet-sayfasi" id="sayfa-sepet" hidden>
+    <button class="btn btn-cizgili alisverise-devam" id="alisverise-devam" type="button"><span aria-hidden="true" style="font-size:16px">←</span><span>Alışverişe devam et</span></button>
+    <div class="sayfa-ust">
+      <h1 class="sayfa-basligi">Sepetim</h1>
+      <span id="sepet-baslik-ozet"></span>
+      <button class="btn btn-tehlike" id="sepeti-temizle" type="button" style="margin-left:auto;height:40px;font-size:13px;font-weight:700" hidden>Sepeti Temizle</button>
+    </div>
+
+    <div class="bos-kutu" id="sepet-bos" hidden>
+      <div class="bos-kutu-baslik">Sepetiniz boş</div>
+      <p id="sepet-bos-not"></p>
+      <button class="btn btn-siyah" id="urunlere-goz-at" type="button">Ürünlere göz at</button>
+    </div>
+
+    <div class="sepet-duzen" id="sepet-dolu">
+      <!-- Sepetteki ürünler — js/sepet.js doldurur -->
+      <section class="sepet-listesi" id="sepet-listesi"></section>
+
+      <aside class="siparis-formu" id="siparis-formu">
+        <!-- Toplamlar — js/sepet.js doldurur -->
+        <div class="ozet-kutu" id="ozet-kutu"></div>
+
+        <!-- Müşteri bilgileri — js/siparis-formu.js yönetir -->
+        <form class="form-grubu" id="musteri-formu" novalidate autocomplete="on">
+          <div class="form-baslik">Teslimat bilgileri</div>
+          <div class="iki-kolon">
+            <label class="form-alan">
+              <span class="form-etiket">Ad *</span>
+              <input class="alan" name="ad" autocomplete="given-name">
+              <span class="hata-metni" data-hata="ad"></span>
+            </label>
+            <label class="form-alan">
+              <span class="form-etiket">Soyad *</span>
+              <input class="alan" name="soyad" autocomplete="family-name">
+              <span class="hata-metni" data-hata="soyad"></span>
+            </label>
+          </div>
+          <label class="form-alan">
+            <span class="form-etiket">Telefon *</span>
+            <input class="alan" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx">
+            <span class="hata-metni" data-hata="tel"></span>
+          </label>
+          <div class="iki-kolon">
+            <div class="il-kutusu">
+              <label class="form-alan">
+                <span class="form-etiket">İl *</span>
+                <input class="alan" id="il-arama" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="il-listesi" placeholder="İl yazın, ör. Bursa">
+              </label>
+              <div class="il-listesi" id="il-listesi" role="listbox" hidden></div>
+              <span class="hata-metni" data-hata="il"></span>
+            </div>
+            <label class="form-alan">
+              <span class="form-etiket">İlçe *</span>
+              <select class="alan" name="ilce" id="ilce-secimi" disabled></select>
+              <span class="hata-metni" data-hata="ilce"></span>
+            </label>
+          </div>
+          <label class="form-alan">
+            <span class="form-etiket">Açık adres *</span>
+            <textarea class="alan" name="adres" rows="3" autocomplete="street-address" placeholder="Mahalle, sokak, bina no, daire"></textarea>
+            <span class="hata-metni" data-hata="adres"></span>
+          </label>
+        </form>
+
+        <div class="form-grubu">
+          <div class="form-baslik">Ödeme yöntemi</div>
+          <div class="odeme-secenekleri" id="odeme-secenekleri" role="radiogroup" aria-label="Ödeme yöntemi"></div>
+          <span class="hata-metni" data-hata="odeme"></span>
+        </div>
+
+        <button class="siparis-buton" id="siparis-gonder" type="button">
+          <img src="img/wa-green.svg" alt=""><span>Siparişini gönder</span>
+        </button>
+        <p class="kucuk-not" id="gonder-bilgi" style="margin-top:-10px"></p>
+
+        <!-- Sipariş oluşturulunca görünen kutu -->
+        <div class="son-siparis" id="son-siparis" hidden>
+          <div class="son-siparis-baslik" id="son-siparis-baslik"></div>
+          <p class="kucuk-not">WhatsApp'ta açılan mesajı gönderin. WhatsApp açılmadıysa aşağıdaki butonu kullanın.</p>
+          <div class="buton-sirasi">
+            <a class="btn btn-wa" id="son-siparis-wa" target="_blank" rel="noopener"><img src="img/wa-white.svg" alt=""><span>WhatsApp'ı aç</span></a>
+            <button class="btn btn-beyaz" id="linki-kopyala" type="button">Bağlantıyı kopyala</button>
+            <button class="btn btn-cizgili" id="sepeti-bosalt" type="button">Sepeti boşalt</button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- ============================== SİPARİŞ (LİNK) ============================== -->
+  <main class="sayfa kapsayici siparis-sayfasi" id="sayfa-siparis" hidden>
+    <!-- js/siparis-sayfasi.js doldurur -->
+    <div class="yonetici-nav" id="siparis-yonetici-nav" hidden>
+      <button class="geri-link" id="siparisten-siparislere" type="button">← Siparişlere dön</button>
+      <button class="geri-link" id="siparisten-panele" type="button">Yönetici Paneli ana sayfası</button>
+    </div>
+    <div id="siparis-icerik"></div>
+    <div style="margin-top:36px"><button class="btn btn-siyah" id="siparisten-kataloga" type="button">Kataloğa git</button></div>
+  </main>
+
+  <!-- ============================== YÖNETİM ============================== -->
+  <main class="sayfa kapsayici yonetim-sayfasi" id="sayfa-yonetim" hidden>
+    <div class="giris-kutusu" id="yonetim-giris">
+      <h2>Yönetici girişi</h2>
+      <p class="kucuk-not">Firebase'de tanımlı yönetici e-postası ve şifresiyle giriş yapın.</p>
+      <input class="alan" id="yonetim-eposta" type="email" autocomplete="username" placeholder="E-posta">
+      <input class="alan" id="yonetim-sifre" type="password" autocomplete="current-password" placeholder="Şifre">
+      <button class="btn btn-siyah btn-tam" id="yonetim-giris-buton" type="button" style="height:48px">Giriş yap</button>
+      <p class="hata-metni" id="yonetim-hata" style="word-break:break-all"></p>
+    </div>
+
+    <div id="yonetim-panel" hidden>
+      <button class="geri-link" id="panel-ana-don" type="button" hidden>← Yönetici Paneli</button>
+      <div class="yonetim-ust">
+        <div>
+          <div class="ust-etiket">Yönetim</div>
+          <h2>Site editörü</h2>
+        </div>
+        <div class="sekmeler" id="yonetim-sekmeler">
+          <button type="button" data-sekme="urunler" class="secili">Ürünler</button>
+          <button type="button" data-sekme="siparisler">Siparişler</button>
+          <button type="button" data-sekme="bannerlar">Banner'lar</button>
+          <button type="button" data-sekme="site">Site bilgileri</button>
+          <button type="button" id="yonetim-cikis">Çıkış</button>
+        </div>
+      </div>
+
+      <div class="sekme-icerik" id="sekme-urunler">
+        <div class="liste-ust">
+          <span id="urun-sayisi"></span>
+          <button class="btn btn-siyah" id="yeni-urun" type="button">+ Yeni ürün</button>
+        </div>
+        <div class="urun-tablosu" id="urun-tablosu"></div>
+        <div class="liste-not">Satırları sürükleyerek katalogdaki sırayı değiştirebilirsiniz.</div>
+      </div>
+
+      <div class="sekme-icerik" id="sekme-siparisler" hidden>
+        <div class="siparis-filtre">
+          <select class="alan" id="siparis-durum-filtre" aria-label="Duruma göre filtrele">
+            <option value="">Tüm durumlar</option>
+          </select>
+          <input class="alan" id="siparis-arama" type="search" placeholder="Sipariş no veya müşteri adı ara">
+          <button class="btn btn-cizgili" id="siparis-yenile" type="button">Yenile</button>
+        </div>
+        <div class="liste-not" id="siparis-ozet" style="padding-top:0"></div>
+        <div class="siparis-tablosu" id="siparis-tablosu"></div>
+        <div style="margin-top:16px"><button class="btn btn-cizgili" id="siparis-daha" type="button" hidden>Daha fazla göster</button></div>
+      </div>
+
+      <div class="sekme-icerik" id="sekme-bannerlar" hidden>
+        <p class="kucuk-not" style="margin-bottom:16px">Ana sayfanın üstündeki kayan banner'lar. Değişiklikler Kaydet'e basınca sitede yayınlanır.</p>
+        <div id="banner-listesi" style="display:flex;flex-direction:column;gap:16px"></div>
+        <div style="margin-top:16px"><button class="btn btn-cizgili" id="banner-ekle" type="button">+ Banner ekle</button></div>
+        <div class="kayit-cubugu" id="banner-kayit-cubugu">
+          <span class="kayit-durum" id="banner-durum"></span>
+          <div class="kayit-cubugu-butonlar">
+            <button class="btn btn-cizgili" id="banner-vazgec" type="button">Vazgeç</button>
+            <button class="btn btn-siyah" id="banner-kaydet" type="button">Kaydet</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="sekme-icerik" id="sekme-site" hidden>
+        <div class="site-bilgileri" id="site-bilgileri"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ============================== ALT BİLGİ ============================== -->
+  <footer class="alt-bilgi">
+    <div class="kapsayici alt-bilgi-izgara">
+      <div>
+        <img src="img/logo.jpg" alt="Koza İpek logo" width="72" height="72">
+        <div class="alt-bilgi-baslik" style="margin:14px 0 0" data-site="footerAlt"></div>
+        <p data-site="altNot"></p>
+      </div>
+      <div>
+        <div class="alt-bilgi-baslik">Adres</div>
+        <address data-site="adres"></address>
+      </div>
+      <div>
+        <div class="alt-bilgi-baslik">İletişim</div>
+        <div class="alt-bilgi-linkler">
+          <a class="alt-bilgi-telefon" id="alt-telefon" data-site="telefon"></a>
+          <a id="alt-whatsapp" target="_blank" rel="noopener"><img src="img/wa-green.svg" alt=""><span>WhatsApp'tan yazın</span></a>
+        </div>
+      </div>
+      <div>
+        <div class="alt-bilgi-baslik">Bağlantılar</div>
+        <div class="alt-bilgi-linkler">
+          <a id="alt-kanal" target="_blank" rel="noopener"><img src="img/wa-green.svg" alt=""><span>WhatsApp toptan satış kanalı</span></a>
+          <a id="alt-instagram" target="_blank" rel="noopener"><img src="img/ig-color.svg" alt=""><span>Instagram</span></a>
+          <a id="alt-youtube" target="_blank" rel="noopener"><img src="img/yt-color.svg" alt=""><span>Koza İpek YouTube Kanalı</span></a>
+          <a id="alt-site" target="_blank" rel="noopener"><span style="width:22px;text-align:center">↗</span><span>kozaipek.net</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="kapsayici alt-bilgi-son">
+      <span>© <span data-site="marka"></span></span>
+      <button id="yonetici-girisi" type="button">Yönetici girişi</button>
+    </div>
+  </footer>
+
+  <!-- Mobil alt menü (sadece 900px altı) -->
+  <nav class="mobil-alt-menu" id="mobil-sepet-cubugu" aria-label="Alt menü" hidden>
+    <button type="button" class="alt-menu-oge" id="alt-menu-katalog">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="5.5" height="5.5" rx="1"/><rect x="11.5" y="3" width="5.5" height="5.5" rx="1"/><rect x="3" y="11.5" width="5.5" height="5.5" rx="1"/><rect x="11.5" y="11.5" width="5.5" height="5.5" rx="1"/></svg>
+      <span>Katalog</span>
+    </button>
+    <a class="alt-menu-oge" id="alt-menu-wa" target="_blank" rel="noopener">
+      <img src="img/wa-green.svg" alt=""><span>WhatsApp</span>
+    </a>
+    <button type="button" class="alt-menu-oge alt-menu-sepet" id="alt-menu-sepet">
+      <span class="alt-menu-sepet-ust"><img src="img/bag-white.svg" alt=""><span id="mobil-sepet-yazi">Sepet</span></span>
+      <span class="alt-menu-sepet-not" id="mobil-sepet-not" hidden></span>
+    </button>
+  </nav>
+
+  <!-- ============================== PENCERELER ============================== -->
+  <!-- Ürün detayı — js/urun-detay.js doldurur -->
+  <div class="modal-arka urun-modal" id="urun-modal" hidden>
+    <div class="modal-kutu urun-kutu" id="urun-kutu" role="dialog" aria-modal="true"></div>
+  </div>
+
+  <!-- Ürün düzenleme — js/yonetim.js doldurur -->
+  <div class="modal-arka duzenle-modal" id="duzenle-modal" hidden>
+    <div class="modal-kutu duzenle-kutu" id="duzenle-kutu" role="dialog" aria-modal="true"></div>
+  </div>
+
+  <!-- Genel onay penceresi (js/yardimcilar.js → onayIste) -->
+  <div class="modal-arka" id="onay-modal" hidden style="z-index:96">
+    <div class="modal-kutu uyari-kutu" role="alertdialog" aria-labelledby="onay-baslik">
+      <div class="uyari-baslik" id="onay-baslik"></div>
+      <p id="onay-metni" style="white-space:pre-line"></p>
+      <div class="uyari-butonlar">
+        <button class="btn btn-siyah btn-buyuk" id="onay-evet" type="button"></button>
+        <button class="btn btn-cizgili" id="onay-hayir" type="button" style="height:46px"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Minimum adet uyarısı -->
+  <div class="modal-arka" id="uyari-modal" hidden style="z-index:95">
+    <div class="modal-kutu uyari-kutu" role="alertdialog">
+      <div class="uyari-ikon">!</div>
+      <div class="uyari-baslik" id="uyari-baslik"></div>
+      <p id="uyari-metni"></p>
+      <div class="uyari-butonlar">
+        <button class="btn btn-siyah btn-buyuk" id="uyari-devam" type="button">Ürün seçmeye devam et</button>
+        <button class="btn btn-cizgili" id="uyari-kapat" type="button" style="height:46px">Sepete dön</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kısa bildirim ("Sepete eklendi" gibi) -->
+  <div class="bildirim" id="bildirim" hidden></div>
+
+  <!-- ============================== JAVASCRIPT ==============================
+       Sıra önemli: önce ayarlar ve yardımcılar, en son uygulama.js -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+  <script src="js/ayarlar.js"></script>
+  <script src="js/veri/il-ilce.js"></script>
+  <script src="js/veri/ornek-urunler.js"></script>
+  <script src="js/yardimcilar.js"></script>
+  <script src="js/depo.js"></script>
+  <script src="js/yonlendirme.js"></script>
+  <script src="js/katalog.js"></script>
+  <script src="js/urun-detay.js"></script>
+  <script src="js/sepet.js"></script>
+  <script src="js/siparis-formu.js"></script>
+  <script src="js/siparis-sayfasi.js"></script>
+  <script src="js/yonetim.js"></script>
+  <script src="js/uygulama.js"></script>
+</body>
+</html>

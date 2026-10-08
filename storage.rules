@@ -1,0 +1,23 @@
+rules_version = '2';
+
+// Koza İpek — Storage güvenlik kuralları (Blaze planı gerekir)
+// Yayınlamak için: firebase deploy --only storage
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Ürün ve banner fotoğrafları: herkes görür, sadece yönetici listeler/yükler/siler
+    match /gorseller/{dosya} {
+      allow get: if true;
+      allow list: if yonetici();
+      allow delete: if yonetici();
+      allow create, update: if yonetici()
+        && request.resource.size < 3 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+    }
+
+    function yonetici() {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/adminler/$(request.auth.uid));
+    }
+  }
+}
